@@ -7,7 +7,14 @@ for this application, delegating rendering logic to
 presentational components. */
 class App extends Component {
   state = {
-    notes: [],
+    notes: [
+      {
+        id: Date.now(),
+        title: "",
+        description: "",
+        doesMatchSearch: true
+      }
+    ],
     searchText: ""
   };
   addNote = () => {
@@ -76,6 +83,27 @@ class App extends Component {
       notes: updatedNotes
     });
   };
+  remove = (deleteMeId) => {
+    /* remove note by id of note that the user clicked on */
+    var notIdMatch = (note) => note.id !== deleteMeId;
+    var updatedNotes = this.state.notes.filter(notIdMatch);
+    this.setState({ notes: updatedNotes });
+  };
+  componentDidUpdate() {
+    /* after each render, save notes data to local storage */
+    var stringifiedNotes = JSON.stringify(this.state.notes);
+    localStorage.setItem("savedNotes", stringifiedNotes);
+  }
+  componentDidMount() {
+    /* after rendering for the first time, read saved
+    notes data from local storage and pass that data
+    to component state if it exists */
+    var stringifiedNotes = localStorage.getItem("savedNotes");
+    if (stringifiedNotes) {
+      var savedNotes = JSON.parse(stringifiedNotes);
+      this.setState({ notes: savedNotes });
+    }
+  }
   render() {
     return (
       <div>
@@ -84,7 +112,11 @@ class App extends Component {
           addNote={this.addNote}
           onSearch={this.onSearch}
         />
-        <NotesList notes={this.state.notes} onType={this.onType} />
+        <NotesList
+          notes={this.state.notes}
+          onType={this.onType}
+          remove={this.remove}
+        />
       </div>
     );
   }

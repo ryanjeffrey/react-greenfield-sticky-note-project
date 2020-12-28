@@ -19,6 +19,7 @@ class Note extends Component {
     var editMeId = this.props.note.id;
     this.props.onType(editMeId, "description", updatedValue);
   };
+  clickDelete = () => this.props.remove(this.props.note.id);
   render() {
     return (
       <li className="note">
@@ -35,7 +36,9 @@ class Note extends Component {
           value={this.props.note.description}
           onChange={this.updateDescription}
         />
-        <span className="note__delete">X</span>
+        <span onClick={this.clickDelete} className="note__delete">
+          X
+        </span>
       </li>
     );
   }
